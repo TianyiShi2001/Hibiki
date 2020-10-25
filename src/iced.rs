@@ -10,10 +10,15 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     //hibiki::main();
 }
 
+#[derive(Debug)]
+pub enum Message {
+    Refresh,
+}
+
 struct MainView {}
 
 impl Sandbox for MainView {
-    type Message = ();
+    type Message = Message;
 
     fn new() -> Self {
         Library::init();
@@ -24,9 +29,9 @@ impl Sandbox for MainView {
         String::from("Hibiki")
     }
 
-    fn update(&mut self, _message: ()) {}
+    fn update(&mut self, _message: Message) {}
 
-    fn view(&mut self) -> Element<()> {
+    fn view(&mut self) -> Element<Message> {
         let db = DB.lock().unwrap();
         let mut stmt = db
             .prepare("SELECT id, title, artist, cover FROM albums")

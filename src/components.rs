@@ -61,7 +61,7 @@ impl Library {
                                         None => None,
                                     };
                                     db.execute(
-                                            "INSERT INTO albums (title, artist, cover) VALUES (?1, ?2, ?3)",
+                                            "INSERT INTO albums (title, artist, cover) VALUES (?, ?, ?)",
                                             params![title, artist, cover],
                                         )
                                         .unwrap();
@@ -70,13 +70,8 @@ impl Library {
                             }
                         }
                         Library::exec(
-                            "INSERT INTO songs (path, title, artist, album_id) VALUES (?1, ?2, ?3, ?4)",
-                            params![
-                                path_string,
-                                title,
-                                artist,
-                                album_id
-                            ],
+                            "INSERT INTO songs (path, title, artist, album_id) VALUES (?, ?, ?, ?)",
+                            params![path_string, title, artist, album_id],
                         )
                         .unwrap();
                     }
