@@ -8,11 +8,11 @@ I love iTunes/Apple Music's UI, but it sucks when it comes to local music manage
 - Changes (e.g. edits of the metadata) are not in-place (because you need import/export)
 - No lossless audio (WAV/FLAC) support
 
-That's why I'm building this application.
+That's why I'm building this application. Originally I wanted to do it with Node.js+Vue+Electron+Quasar due to the appealing UI, but it turns out to be extremely difficult to debug.
 
 This project is in very early development, and I have no experience in GUI programming (and there aren't many Rust GUI projects out there), so do not expect Hibiki to be usable anytime soon.
 
-Please don't hesitate to give comments on how to structure this project by opening an issue, or you can make a PR. If you happen to be enthusiastic about his project and are experience in GUI programming, **I can transfer the ownership to you**.
+Please don't hesitate to give comments on how to structure this project by opening an issue, or you can make a PR. If you happen to be enthusiastic about his project and are experienced in GUI programming, **I can transfer the ownership to you**.
 
 ## So what the currect status
 

@@ -1,6 +1,7 @@
 pub mod components;
 pub mod iced;
 use components::Library;
+pub mod db;
 
 pub fn get_hibiki_dirs() -> Vec<String> {
     use std::env;
