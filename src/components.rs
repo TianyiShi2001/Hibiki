@@ -14,37 +14,60 @@ impl Library {
     }
     pub fn from_dirs(dirs: &[String]) {
         for ref dir in dirs {
-            let pattern = dir.to_owned().clone() + "/**/*.mp3";
-            for path in glob(&pattern).expect("fail to read glob pattern") {
-                match path {
-                    Ok(path) => {
-                        let title_fallback = path
-                            //.as_ref()
-                            .file_name()
-                            .unwrap()
-                            .to_string_lossy()
-                            .to_string();
-                        let path_string = path.as_path().display().to_string();
-                        let mut title: String = title_fallback;
-                        let mut artist: Option<String> = None;
-                        let mut album_id: Option<u32> = None;
-                        if let Ok(tags) = Tag::read_from_path(&path) {
-                            if let Some(t) = tags.album().map(String::from) {
-                                title = t;
-                                artist = tags.album_artist().map(String::from);
-                                let db = DB.lock().unwrap();
+            let paths = ["mp3", "m4a"].into_iter().fold(Vec::new(), |mut v, &ext| {
+                let pattern = dir.to_owned().clone() + "/**/*." + ext;
+                for path in glob(&pattern).expect("fail to read glob pattern") {
+                    v.push(path.unwrap());
+                }
+                v
+            });
+            //let pattern = dir.to_owned().clone() + "/**/*.mp3";
+            for path in paths {
+                {
+                    println!("{:?}", &path);
+                    let title_fallback = path
+                        //.as_ref()
+                        .file_name()
+                        .unwrap()
+                        .to_string_lossy()
+                        .to_string();
+                    let path_string = path.as_path().display().to_string();
+                    let mut title: String = title_fallback;
+                    let mut artist: Option<String> = None;
+                    let mut album_id: Option<u32> = None;
+                    if let Ok(tags) = Tag::read_from_path(&path) {
+                        if let Some(t) = tags.album().map(String::from) {
+                            title = t;
+                            artist = tags.album_artist().map(String::from);
+                            let db = DB.lock().unwrap();
 
-                                let stmt = if let Some(a) = &artist {
-                                    format!(
-                                        "SELECT id FROM albums WHERE title = '{}' AND artist = '{}'",
-                                        &title, a
-                                    )
-                                } else {
-                                    format!(
-                                        "SELECT id FROM albums WHERE title = '{}' AND artist IS NULL",
-                                        &title
-                                    )
+                            let stmt = if let Some(a) = &artist {
+                                format!(
+                                    "SELECT id FROM albums WHERE title = '{}' AND artist = '{}'",
+                                    &title, a
+                                )
+                            } else {
+                                format!(
+                                    "SELECT id FROM albums WHERE title = '{}' AND artist IS NULL",
+                                    &title
+                                )
+                            };
+                            album_id = if let Ok(album_id) = db.query_row(
+                                &stmt,     //  AND artist = '?2'
+                                params![], // params![title, artist]
+                                |row| row.get(0),
+                            ) {
+                                println!("1");
+                                println!("{}", &title);
+                                Some(album_id)
+                            } else {
+                                println!("2");
+                                println!("{}", &title);
+                                let cover = match &tags.pictures().next() {
+                                    Some(ref pic) => Some(pic.data.clone()),
+                                    None => None,
                                 };
+<<<<<<< Updated upstream
                                 album_id = if let Ok(album_id) = db.query_row(
                                     &stmt,     //  AND artist = '?2'
                                     params![], // params![title, artist]
@@ -74,9 +97,23 @@ impl Library {
                             params![path_string, title, artist, album_id],
                         )
                         .unwrap();
+=======
+                                db.execute(
+                                    "INSERT INTO albums (title, artist, cover) VALUES (?1, ?2, ?3)",
+                                    params![title, artist, cover],
+                                )
+                                .unwrap();
+                                Some(db.last_insert_rowid() as u32)
+                            }
+                        }
+>>>>>>> Stashed changes
                     }
-                    Err(e) => println!("{:?}", e),
-                };
+                    Library::exec(
+                        "INSERT INTO songs (path, title, artist, album_id) VALUES (?1, ?2, ?3, ?4)",
+                        params![path_string, title, artist, album_id],
+                    )
+                    .unwrap();
+                }
             }
         }
     }
