@@ -13,3 +13,4 @@ iced = {git = "https://github.com/hecrj/iced.git", features = ["image", "svg"]}
 id3 = "0.5.1"
 lazy_static = "1.4.0"
 rusqlite = "0.24.1"
+audiotags = "0.0.1"

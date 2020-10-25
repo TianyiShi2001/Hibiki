@@ -62,7 +62,7 @@ impl Sandbox for MainView {
                             include_bytes!("../assets/folder-music.png").to_vec(),
                         ),
                     }))
-                    .height(Length::Units(200))
+                    .height(Length::Units(100))
                 },
             )
             .into()

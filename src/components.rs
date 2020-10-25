@@ -1,4 +1,5 @@
 use crate::db::DB;
+use audiotags::from_path;
 use glob::glob;
 use id3::{Tag, Version};
 use rusqlite::params;
@@ -14,7 +15,7 @@ impl Library {
     }
     pub fn from_dirs(dirs: &[String]) {
         for ref dir in dirs {
-            let paths = ["mp3", "m4a"].into_iter().fold(Vec::new(), |mut v, &ext| {
+            let paths = ["mp3", "m4a"].iter().fold(Vec::new(), |mut v, &ext| {
                 let pattern = dir.to_owned().clone() + "/**/*." + ext;
                 for path in glob(&pattern).expect("fail to read glob pattern") {
                     v.push(path.unwrap());
@@ -35,8 +36,8 @@ impl Library {
                     let mut title: String = title_fallback;
                     let mut artist: Option<String> = None;
                     let mut album_id: Option<u32> = None;
-                    if let Ok(tags) = Tag::read_from_path(&path) {
-                        if let Some(t) = tags.album().map(String::from) {
+                    if let Ok(tags) = audiotags::from_path(&path) {
+                        if let Some(t) = tags.album_title().map(String::from) {
                             title = t;
                             artist = tags.album_artist().map(String::from);
                             let db = DB.lock().unwrap();
@@ -57,47 +58,13 @@ impl Library {
                                 params![], // params![title, artist]
                                 |row| row.get(0),
                             ) {
-                                println!("1");
-                                println!("{}", &title);
                                 Some(album_id)
                             } else {
-                                println!("2");
-                                println!("{}", &title);
-                                let cover = match &tags.pictures().next() {
-                                    Some(ref pic) => Some(pic.data.clone()),
-                                    None => None,
-                                };
-<<<<<<< Updated upstream
-                                album_id = if let Ok(album_id) = db.query_row(
-                                    &stmt,     //  AND artist = '?2'
-                                    params![], // params![title, artist]
-                                    |row| row.get(0),
-                                ) {
-                                    println!("1");
-                                    println!("{}", &title);
-                                    Some(album_id)
-                                } else {
-                                    println!("2");
-                                    println!("{}", &title);
-                                    let cover = match &tags.pictures().next() {
-                                        Some(ref pic) => Some(pic.data.clone()),
-                                        None => None,
-                                    };
-                                    db.execute(
-                                            "INSERT INTO albums (title, artist, cover) VALUES (?, ?, ?)",
-                                            params![title, artist, cover],
-                                        )
-                                        .unwrap();
-                                    Some(db.last_insert_rowid() as u32)
-                                }
-                            }
-                        }
-                        Library::exec(
-                            "INSERT INTO songs (path, title, artist, album_id) VALUES (?, ?, ?, ?)",
-                            params![path_string, title, artist, album_id],
-                        )
-                        .unwrap();
-=======
+                                let cover = tags.album_cover().map(|pic| match pic {
+                                    audiotags::Picture::Png(a) => a,
+                                    audiotags::Picture::Jpeg(a) => a,
+                                    _ => panic!("unsupported picture type"),
+                                });
                                 db.execute(
                                     "INSERT INTO albums (title, artist, cover) VALUES (?1, ?2, ?3)",
                                     params![title, artist, cover],
@@ -106,7 +73,6 @@ impl Library {
                                 Some(db.last_insert_rowid() as u32)
                             }
                         }
->>>>>>> Stashed changes
                     }
                     Library::exec(
                         "INSERT INTO songs (path, title, artist, album_id) VALUES (?1, ?2, ?3, ?4)",
