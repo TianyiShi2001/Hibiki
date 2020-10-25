@@ -19,3 +19,9 @@ Please don't hesitate to give comments on how to structure this project by openi
 Find all mp3 files containted in specified directories, parse their id3v2 tags, and display album cover images.
 
 ![](10-24.png)
+
+## So how do I reproduce the screenshots shown above
+
+- Have `sqlite3` installed
+- set the `HIBIKI_DIRS` enviornmental variable, for example by appending `export HIBIKI_DIRS=$HOME/Music:/path/to/another/dir` to `~/.bashrc`
+- Clone and `cd` to this repository and `cargo run`

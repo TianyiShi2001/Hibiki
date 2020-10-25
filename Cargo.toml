@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 glob = "0.3.0"
 globset = "0.4.6"
-iced = {path = "../../Github/iced", features = ["image", "svg"]}
+iced = {git = "https://github.com/hecrj/iced.git", features = ["image", "svg"]}
 id3 = "0.5.1"
 lazy_static = "1.4.0"
 rusqlite = "0.24.1"
