@@ -14,7 +14,7 @@ This project is in very early development, and I have no experience in GUI progr
 
 Please don't hesitate to give comments on how to structure this project by opening an issue, or you can make a PR. If you happen to be enthusiastic about his project and are experienced in GUI programming, **I can transfer the ownership to you**.
 
-## So what the currect status
+## So what's the currect status
 
 Find all mp3 files containted in specified directories, parse their id3v2 tags, and display album cover images.
 
@@ -25,3 +25,11 @@ Find all mp3 files containted in specified directories, parse their id3v2 tags, 
 - Have `sqlite3` installed
 - set the `HIBIKI_DIRS` enviornmental variable, for example by appending `export HIBIKI_DIRS=$HOME/Music:/path/to/another/dir` to `~/.bashrc`
 - Clone and `cd` to this repository and `cargo run`
+
+## Challenges
+
+- Performance of **iced**:
+  - [it re-renders upon any event even if it's not registered](https://github.com/hecrj/iced/issues/579)
+- Capability of **iced**:
+  - no layers
+  - no animations

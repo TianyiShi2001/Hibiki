@@ -60,11 +60,7 @@ impl Library {
                             ) {
                                 Some(album_id)
                             } else {
-                                let cover = tags.album_cover().map(|pic| match pic {
-                                    audiotags::Picture::Png(a) => a,
-                                    audiotags::Picture::Jpeg(a) => a,
-                                    _ => panic!("unsupported picture type"),
-                                });
+                                let cover = tags.album_cover().map(|pic| pic.data);
                                 db.execute(
                                     "INSERT INTO albums (title, artist, cover) VALUES (?1, ?2, ?3)",
                                     params![title, artist, cover],
@@ -91,6 +87,15 @@ impl Library {
     {
         DB.lock().unwrap().execute(stmt, params)
     }
+
+    // pub fn album_view(album_id: u32) {
+    //     let db = DB.lock().unwrap();
+    //     let stmt = db.prepare(&format!(
+    //         "SELECT id FROM songs WHERE album_id = {} ORDER BY disc, track",
+    //         album_id
+    //     )).unwrap();
+    //     stmt.
+    // }
 }
 
 #[derive(Debug)]

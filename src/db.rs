@@ -12,7 +12,11 @@ lazy_static! {
                       path            TEXT NOT NULL,
                       title           TEXT NOT NULL,
                       artist          TEXT,
-                      album_id        INTEGER
+                      album_id        INTEGER,
+                      track           INTEGER,
+                      total_tracks    INTEGER,
+                      disc            INTEGER
+                      total_discs     INTEGER
                       );
              CREATE TABLE albums (
                       id              INTEGER PRIMARY KEY,

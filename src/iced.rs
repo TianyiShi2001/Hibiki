@@ -50,10 +50,7 @@ impl Sandbox for MainView {
 
         albums
             .fold(
-                Row::new()
-                    .padding(10)
-                    .spacing(20)
-                    .align_items(Align::Center),
+                Row::new().padding(0).spacing(0).align_items(Align::Center),
                 |row, album| {
                     println!("Found {:?}", &album.title);
                     row.push(Image::new(match &album.cover {
@@ -62,6 +59,7 @@ impl Sandbox for MainView {
                             include_bytes!("../assets/folder-music.png").to_vec(),
                         ),
                     }))
+                    //.width(Length::Units(100))
                     .height(Length::Units(100))
                 },
             )
